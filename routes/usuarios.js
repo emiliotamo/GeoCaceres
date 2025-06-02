@@ -3,6 +3,21 @@ const router = express.Router();
 const db = require('../db/client');
 const bcrypt = require('bcrypt');
 
+// GET: Obtener un usuario por ID
+router.get('/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const result = await db.query('SELECT * FROM usuarios WHERE id = $1', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('❌ Error al obtener usuario por ID:', err);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+});
+
 // GET: Obtener todos los usuarios (solo para pruebas)
 router.get('/', async (req, res) => {
   try {

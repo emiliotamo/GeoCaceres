@@ -2,12 +2,30 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/client');
 
-// Crear una reserva con límite de 6 por día y servicio
+// GET /api/reservas?usuario_id=...
+router.get('/', async (req, res) => {
+  const { usuario_id } = req.query;
+  try {
+    const result = await db.query(
+      `SELECT r.*, s.nombre AS servicio_nombre, s.descripcion, s.precio 
+       FROM reservas r
+       JOIN servicios s ON r.servicio_id = s.id
+       WHERE r.usuario_id = $1
+       ORDER BY r.fecha`,
+      [usuario_id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('❌ Error al obtener reservas con servicio:', err);
+    res.status(500).json({ message: 'Error al obtener reservas' });
+  }
+});
+
+// POST /api/reservas
 router.post('/', async (req, res) => {
   const { usuario_id, servicio_id, fecha, cantidad = 1 } = req.body;
 
   try {
-    // Comprobar cuántas reservas ya hay para ese día y servicio
     const result = await db.query(
       'SELECT COUNT(*) FROM reservas WHERE servicio_id = $1 AND fecha = $2',
       [servicio_id, fecha]
@@ -21,7 +39,6 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Crear la reserva
     await db.query(
       'INSERT INTO reservas (usuario_id, servicio_id, fecha, cantidad) VALUES ($1, $2, $3, $4)',
       [usuario_id, servicio_id, fecha, cantidad]
