@@ -7,141 +7,147 @@
   <link rel="stylesheet" href="./sass/style.css" />
   <style>
     body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background-color: #071920;
-      color: #fff;
       font-family: 'Poppins', sans-serif;
-    }
-
-    .main-text {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .main-container {
-      max-width: 500px;
-      width: 100%;
-      margin: 0 auto;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 2rem;
-      border-radius: 12px;
-    }
-
-    .perfil-campo {
-      margin-bottom: 1.2rem;
-    }
-
-    .perfil-campo label {
-      display: block;
-      margin-bottom: 0.3rem;
-      font-weight: bold;
-    }
-
-    .perfil-campo input {
-      width: 100%;
-      padding: 0.7rem;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-      font-size: 1rem;
+      margin: 0;
+      padding: 0;
+      background-color: #00141c;
+      color: #fff;
     }
 
     .btn {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      background-color: #3de3c0;
-      color: #000;
-      font-weight: bold;
+      background-color: #3ee0c3;
       border: none;
-      border-radius: 10px;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
       cursor: pointer;
-      font-size: 1rem;
-      text-decoration: none;
-      margin-top: 1rem;
+      transition: 0.3s;
     }
 
     .btn:hover {
-      background-color: #2ed6b2;
+      background-color: #34cdb1;
+    }
+
+    .perfil-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 3rem;
+      padding: 2rem 5%;
+      flex-wrap: wrap;
+    }
+
+    .perfil-box, .reservas-box {
+      background-color: #fff;
+      color: #000;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 650px;
+    }
+
+    .perfil-box h2 {
+      font-size: 2.5rem;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .datos-perfil p, 
+    .reserva-box p {
+      font-size: 1.25rem;
+      margin: 0.3rem 0;
+    }
+
+    label {
+      font-size: 1.1rem;
+    }
+
+    #formPerfil {
+      margin-top: 1rem;
+    }
+
+    #formPerfil input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      font-family: 'Poppins', sans-serif;
     }
 
     .reserva-box {
       background-color: #fff;
       color: #000;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 2rem;
       border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .reserva-box:hover {
+      transform: scale(1.02);
+    }
+
+    .main-title {
       text-align: center;
+      margin-top: 1rem;
+      font-size: 2.8rem;
+      color: #fff;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .logout-btn {
+      text-align: center;
+      margin: 2rem auto;
     }
   </style>
 </head>
 <body>
-  <a href="index.html" class="btn">← Volver al inicio</a>
+  <a href="index.html" class="btn" style="position: absolute; top: 1rem; left: 1rem;">← Volver al inicio</a>
 
-  <section class="contact" id="perfil">
-    <div class="main-text">
-      <h2>Mi cuenta</h2>
-      <h1>Mi Perfil</h1>
-    </div>
-    <div class="main-container" id="datosPerfil"></div>
+  <h1 class="main-title">MI CUENTA</h1>
 
-    <div class="main-container hidden" id="formPerfil">
-      <form id="perfilForm">
-        <div class="perfil-campo">
+  <div class="perfil-container">
+    <div style="flex: 1; min-width: 300px;">
+      <h2>Mi Perfil</h2>
+      <div class="perfil-box datos-perfil" id="datosPerfil"></div>
+      <div class="perfil-box hidden" id="formPerfil">
+        <form id="perfilForm">
           <label>Nombre completo</label>
           <input type="text" name="name" required />
-        </div>
-        <div class="perfil-campo">
+
           <label>Nombre de usuario</label>
           <input type="text" name="username" required />
-        </div>
-        <div class="perfil-campo">
+
           <label>Email</label>
           <input type="email" name="email" required />
-        </div>
-        <div class="perfil-campo">
+
           <label>Teléfono</label>
           <input type="tel" name="phone" required />
-        </div>
-        <button type="submit" class="btn">Guardar cambios</button>
-      </form>
+
+          <button type="submit" class="btn">Guardar cambios</button>
+        </form>
+      </div>
+      <button id="btnEditar" class="btn" style="margin-top: 1rem;">🖉 Editar perfil</button>
     </div>
 
-    <div class="main-container">
-      <button id="btnEditar" class="btn">🖉 Editar perfil</button>
+    <div style="flex: 1; min-width: 300px;">
+      <h2>Mis Reservas</h2>
+      <div class="reservas-box" id="listaReservas"></div>
     </div>
-  </section>
+  </div>
 
-  <section class="contact" id="reservas">
-    <div class="main-text">
-      <h1>Mis Reservas</h1>
-    </div>
-    <div class="main-container" id="listaReservas"></div>
-  </section>
+  <div class="logout-btn">
+    <button onclick="logoutUser()" class="btn">Cerrar sesión</button>
+  </div>
 
   <div id="modalConfirmacion" class="modal hidden">
     <div class="modal-content">
@@ -160,7 +166,6 @@
       }
 
       const userId = user.id;
-
       const datosPerfil = document.getElementById("datosPerfil");
       const formPerfil = document.getElementById("formPerfil");
       const perfilForm = document.getElementById("perfilForm");
@@ -168,8 +173,6 @@
 
       const datos = await fetch(`/api/usuarios/${userId}`).then(res => res.json());
 
-
-      // Mostrar los datos como <p>
       function renderDatos() {
         datosPerfil.innerHTML = `
           <p><strong>Nombre:</strong> ${datos.name}</p>
@@ -215,55 +218,55 @@
         });
       });
 
-    // RESERVAS
-const lista = document.getElementById("listaReservas");
-const reservas = await fetch(`/api/reservas?usuario_id=${userId}`).then(res => res.json());
+      // RESERVAS
+      const lista = document.getElementById("listaReservas");
+      const reservas = await fetch(`/api/reservas?usuario_id=${userId}`).then(res => res.json());
 
-if (!reservas.length) {
-  lista.innerHTML = `
-    <p>En este momento no tienes ninguna reserva.</p>
-    <a href="reservas.html" class="btn">Ir a hacer una reserva</a>
-  `;
-} else {
-  reservas.forEach(r => {
-    const div = document.createElement("div");
-    div.className = "reserva-box";
-    div.innerHTML = `
-      <p><strong>Servicio:</strong> ${r.servicio_nombre}</p>
-      <p><strong>Fecha:</strong> 
-        <input type="date" value="${r.fecha.split('T')[0]}" data-id="${r.id}" class="cambiarFecha" />
-      </p>
-      <p><strong>Personas:</strong> ${r.cantidad}</p>
-      <button class="btn cancelarReserva" data-id="${r.id}">🗑️ Cancelar</button>
-    `;
-    lista.appendChild(div);
-  });
-}
+      if (!reservas.length) {
+        lista.innerHTML = `
+          <p>En este momento no tienes ninguna reserva.</p>
+          <a href="reservas.html" class="btn">Ir a hacer una reserva</a>
+        `;
+      } else {
+        reservas.forEach(r => {
+          const div = document.createElement("div");
+          div.className = "reserva-box";
+          div.innerHTML = `
+            <p><strong>Servicio:</strong> ${r.servicio_nombre}</p>
+            <p><strong>Fecha:</strong> 
+              <input type="date" value="${r.fecha.split('T')[0]}" data-id="${r.id}" class="cambiarFecha" />
+            </p>
+            <p><strong>Personas:</strong> ${r.cantidad}</p>
+            <button class="btn cancelarReserva" data-id="${r.id}">🗑️ Cancelar</button>
+          `;
+          lista.appendChild(div);
+        });
+      }
 
-lista.addEventListener("change", e => {
-  if (e.target.classList.contains("cambiarFecha")) {
-    const id = e.target.dataset.id;
-    const fecha = e.target.value;
-    mostrarModal("¿Deseas cambiar la fecha de esta reserva?", async () => {
-      await fetch(`/api/reservas/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fecha })
+      lista.addEventListener("change", e => {
+        if (e.target.classList.contains("cambiarFecha")) {
+          const id = e.target.dataset.id;
+          const fecha = e.target.value;
+          mostrarModal("¿Deseas cambiar la fecha de esta reserva?", async () => {
+            await fetch(`/api/reservas/${id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ fecha })
+            });
+            alert("📆 Fecha actualizada");
+          });
+        }
       });
-      alert("📆 Fecha actualizada");
-    });
-  }
-});
 
-lista.addEventListener("click", e => {
-  if (e.target.classList.contains("cancelarReserva")) {
-    const id = e.target.dataset.id;
-    mostrarModal("¿Deseas cancelar esta reserva?", async () => {
-      await fetch(`/api/reservas/${id}`, { method: "DELETE" });
-      location.reload();
-    });
-  }
-});
+      lista.addEventListener("click", e => {
+        if (e.target.classList.contains("cancelarReserva")) {
+          const id = e.target.dataset.id;
+          mostrarModal("¿Deseas cancelar esta reserva?", async () => {
+            await fetch(`/api/reservas/${id}`, { method: "DELETE" });
+            location.reload();
+          });
+        }
+      });
 
       // MODAL
       const modal = document.getElementById("modalConfirmacion");
@@ -287,8 +290,5 @@ lista.addEventListener("click", e => {
       }
     });
   </script>
-
-<script src="/js/micuenta.js"></script>
-
 </body>
 </html>
