@@ -1,3 +1,5 @@
+console.log("🧨 main.js cargado correctamente");
+
 document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ DOM cargado");
   
@@ -62,4 +64,49 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch(err => console.error('Error al obtener usuarios:', err));
   });
+
+  async function loginUser() {
+    console.log("🧪 loginUser ejecutándose");
+    const user = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+  
+    try {
+      const res = await fetch('/api/usuarios/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, password: pass })
+      });
+  
+      const data = await res.json();
+  
+      console.log("🔎 Respuesta del servidor:", data);
+  
+      if (res.ok) {
+        const userObj = {
+          id: data.user_id,
+          username: data.username,
+          name: data.name
+        };
+  
+        console.log("✅ Usuario autenticado, guardando en localStorage:", userObj);
+        localStorage.setItem("usuario", JSON.stringify(userObj));
+  
+        // Verificamos inmediatamente si se guardó correctamente
+        const stored = localStorage.getItem("usuario");
+        console.log("📦 localStorage justo antes del reload:", stored);
+  
+        // Esperar brevemente para asegurar que se guarda
+        await new Promise(resolve => setTimeout(resolve, 100));
+  
+        location.reload();
+      } else {
+        alert("❌ " + data.message);
+      }
+    } catch (error) {
+      console.error('❌ Error en login:', error);
+      alert("Error al iniciar sesión");
+    }
+  
+    return false;
+  }
   
