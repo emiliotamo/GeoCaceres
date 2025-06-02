@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mi Cuenta</title>
+  <style>
+    .hidden { display: none; }
+    .modal {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex; justify-content: center; align-items: center;
+    }
+    .modal-content {
+      background: white; padding: 20px; border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mi Perfil</h1>
+
+  <section id="perfil">
+    <form id="perfilForm">
+      <label>Nombre completo: <input type="text" name="name" required /></label><br />
+      <label>Nombre de usuario: <input type="text" name="username" required /></label><br />
+      <label>Email: <input type="email" name="email" required /></label><br />
+      <label>Teléfono: <input type="tel" name="phone" required /></label><br />
+      <button type="submit">Guardar cambios</button>
+    </form>
+  </section>
+
+  <hr />
+
+  <section id="reservas">
+    <h2>Mis Reservas</h2>
+    <div id="listaReservas"></div>
+  </section>
+
+  <!-- Modal -->
+  <div id="modalConfirmacion" class="modal hidden">
+    <div class="modal-content">
+      <p id="modalMensaje"></p>
+      <button id="confirmarAccion">Sí</button>
+      <button id="cancelarAccion">No</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const user = JSON.parse(localStorage.getItem("usuario"));
+      if (!user) {
+        alert("⚠️ Usuario no autenticado");
+        return window.location.href = "login.html";
+      }
+
+      const userId = user.user_id;
+      const perfilForm = document.getElementById("perfilForm");
+      const lista = document.getElementById("listaReservas");
+
+      // Cargar datos de perfil
+      const perfil = await fetch(`/usuarios/${userId}`).then(res => res.json());
+      perfilForm.name.value = perfil.name;
+      perfilForm.username.value = perfil.username;
+      perfilForm.email.value = perfil.email;
+      perfilForm.phone.value = perfil.phone;
+
+      // Guardar cambios de perfil
+      perfilForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        mostrarModal("¿Deseas guardar los cambios del perfil?", async () => {
+          const data = {
+            name: perfilForm.name.value,
+            username: perfilForm.username.value,
+            email: perfilForm.email.value,
+            phone: perfilForm.phone.value
+          };
+          await fetch(`/usuarios/${userId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+          alert("✅ Perfil actualizado");
+        });
+      });
+
+      // Cargar reservas del usuario
+      const reservas = await fetch(`/reservas?usuario_id=${userId}`).then(res => res.json());
+      if (!reservas.length) {
+        lista.innerHTML = "<p>No tienes reservas actualmente.</p>";
+      } else {
+        reservas.forEach(reserva => {
+          const div = document.createElement("div");
+          div.innerHTML = `
+            <p><strong>Reserva ID #${reserva.id}</strong></p>
+            <label>Fecha:
+              <input type="date" value="${reserva.fecha.split('T')[0]}" data-id="${reserva.id}" class="cambiarFecha" />
+            </label>
+            <button class="cancelarReserva" data-id="${reserva.id}">Cancelar</button>
+            <hr />
+          `;
+          lista.appendChild(div);
+        });
+      }
+
+      // Cambiar fecha de reserva
+      lista.addEventListener("change", async (e) => {
+        if (e.target.classList.contains("cambiarFecha")) {
+          const id = e.target.dataset.id;
+          const nuevaFecha = e.target.value;
+          await fetch(`/reservas/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fecha: nuevaFecha })
+          });
+          alert("📆 Fecha de reserva actualizada");
+        }
+      });
+
+      // Cancelar reserva
+      lista.addEventListener("click", (e) => {
+        if (e.target.classList.contains("cancelarReserva")) {
+          const id = e.target.dataset.id;
+          mostrarModal("¿Estás seguro de cancelar esta reserva?", async () => {
+            await fetch(`/reservas/${id}`, { method: "DELETE" });
+            location.reload();
+          });
+        }
+      });
+
+      // Modal genérico
+      const modal = document.getElementById("modalConfirmacion");
+      const mensaje = document.getElementById("modalMensaje");
+      const confirmar = document.getElementById("confirmarAccion");
+      const cancelar = document.getElementById("cancelarAccion");
+
+      function mostrarModal(texto, callback) {
+        mensaje.textContent = texto;
+        modal.classList.remove("hidden");
+
+        const confirmHandler = () => {
+          callback();
+          cerrarModal();
+        };
+        const cancelHandler = cerrarModal;
+
+        confirmar.addEventListener("click", confirmHandler, { once: true });
+        cancelar.addEventListener("click", cancelHandler, { once: true });
+      }
+
+      function cerrarModal() {
+        modal.classList.add("hidden");
+      }
+    });
+  </script>
+</body>
+</html>

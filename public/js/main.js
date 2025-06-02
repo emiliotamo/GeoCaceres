@@ -1,24 +1,33 @@
 console.log("🧨 main.js cargado correctamente");
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("✅ DOM cargado");
+  console.log("✅ DOM cargado");
+
+  // Verifica usuario en localStorage
+  const userData = localStorage.getItem("usuario");
+  console.log("🧪 Usuario guardado:", userData);
+
+  if (userData) {
+    const user = JSON.parse(userData);
+
+    // Actualizar el header
+    const authContent = document.getElementById("authContent");
+    console.log("🔎 authContent:", authContent);
+    if (authContent) {
+      authContent.innerHTML = `
+        <a href="micuenta.html">Mi perfil</a> /
+        <a href="#" id="logoutLink">Cerrar sesión</a>
+      `;
+
+      // Agregar evento de logout
+      const logoutLink = document.getElementById("logoutLink");
+      logoutLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        localStorage.removeItem("usuario");
+        location.reload();
+      });
+    }
   
-    // Verifica usuario en localStorage
-    const userData = localStorage.getItem("usuario");
-    console.log("🧪 Usuario guardado:", userData);
-  
-    if (userData) {
-      const user = JSON.parse(userData);
-  
-      // Actualizar el header
-      const authContent = document.getElementById("authContent");
-      console.log("🔎 authContent:", authContent);
-      if (authContent) {
-        authContent.innerHTML = `
-          <strong>${user.username}</strong> /
-          <a href="#" onclick="logoutUser()">Cerrar sesión</a>
-        `;
-      }
   
       // Ocultar campos del formulario de contacto
       const nameField = document.getElementById('contact-name');
