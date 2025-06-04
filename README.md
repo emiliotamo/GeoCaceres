@@ -53,9 +53,7 @@ GEOCACERES/
 git clone https://github.com/emiliotamo/GeoCaceres.git
 cd GeoCaceres
 2. Instalar dependencias
-bash
-Copy
-Edit
+
 npm install
 3. Configurar las variables de entorno
 Crea un archivo .env y añade:
