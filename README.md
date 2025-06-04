@@ -46,10 +46,6 @@ GEOCACERES/
 ├── package.json
 └── .gitignore
 
-bash
-Copy
-Edit
-
 ## ⚙️ Instalación y uso
 
 ### 1. Clonar el repositorio
@@ -64,15 +60,10 @@ npm install
 3. Configurar las variables de entorno
 Crea un archivo .env y añade:
 
-env
-Copy
-Edit
 DATABASE_URL=postgres://usuario:contraseña@host:puerto/base_de_datos
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 4. Ejecutar en desarrollo
-bash
-Copy
-Edit
+
 npm run dev
 Abre en el navegador:
 http://localhost:3000
