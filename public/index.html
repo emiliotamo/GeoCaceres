@@ -47,7 +47,7 @@
                   
             </ul>
             <div class="btn-group">
-                <a href="asistente/asistente.html" class="btn btn-try">
+                <a href="#" class="btn btn-try" onclick="verificarSesionYContinuar(() => window.location.href='asistente/asistente.html')">
                     <span>Ir al asistente virtual</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
@@ -299,7 +299,7 @@
 </div>
 
             </div>
-            <a href="reservas.html">
+            <a href="#" onclick="verificarSesionYContinuar(() => window.location.href='reservas.html')">
                 <button class="btn btn-view-all">
                     Hacer una reserva
                 </button>
@@ -360,7 +360,7 @@
 <br>
 <br>
         <!-- Botón justo debajo de la imagen -->
-        <a href="asistente/asistente.html">
+      <a href="#" onclick="verificarSesionYContinuar(() => window.location.href='asistente/asistente.html')">
             <button class="btn btn-view-all" style="display: block; margin: 0 auto;">
                 Ir al asistente
             </button>
@@ -570,6 +570,42 @@
     </div>
 </div>
 
+<!-- Modal de acceso restringido -->
+<div id="authRequiredModal" class="modal" style="display: none;">
+  <div class="modal-content" id="modalContent">
+    <div class="modal-header" id="modalHeader">
+      <span class="close" onclick="document.getElementById('authRequiredModal').style.display='none'">&times;</span>
+      <h2>Acceso restringido</h2>
+    </div>
+    <p>Para acceder a esta sección necesitas haber iniciado sesión.</p>
+    <br>
+    <div style="display: flex; justify-content: space-around;">
+      <button class="btn-send" onclick="abrirLoginDesdeAviso()">Iniciar sesión</button>
+      <a href="registro.html"><button class="btn-send">Registrarse</button></a>
+    </div>
+  </div>
+</div>
+
+<!-- FUNCIONES JS PARA EL MODAL DE AVISO -->
+<script>
+  function verificarSesionYContinuar(callback) {
+    const userData = localStorage.getItem("usuario");
+    if (!userData) {
+      mostrarModalAccesoRestringido();
+    } else {
+      callback();
+    }
+  }
+
+  function mostrarModalAccesoRestringido() {
+    document.getElementById("authRequiredModal").style.display = "block";
+  }
+
+  function abrirLoginDesdeAviso() {
+    document.getElementById("authRequiredModal").style.display = "none";
+    document.getElementById("loginModal").style.display = "block";
+  }
+</script>
 
 
 
@@ -631,12 +667,14 @@
   const extraPlaces = document.querySelectorAll('.extra-place');
   const reservaPromo = document.getElementById('reservaPromo');
 
-  verMasBtn.addEventListener('click', function () {
+verMasBtn.addEventListener('click', function () {
+  verificarSesionYContinuar(() => {
     extraPlaces.forEach(el => el.style.display = 'block');
     verMasBtn.style.display = 'none';
     verMenosBtn.style.display = 'inline-block';
     reservaPromo.style.display = 'block';
   });
+});
 
   verMenosBtn.addEventListener('click', function () {
     extraPlaces.forEach(el => el.style.display = 'none');
