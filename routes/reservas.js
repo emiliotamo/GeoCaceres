@@ -21,34 +21,79 @@ router.get('/', async (req, res) => {
   }
 });
 
+
+
 // POST /api/reservas
 router.post('/', async (req, res) => {
   const { usuario_id, servicio_id, fecha, cantidad = 1 } = req.body;
 
   try {
+    // 1. Verificar si hay disponibilidad en fechas_disponibles
     const result = await db.query(
-      'SELECT COUNT(*) FROM reservas WHERE servicio_id = $1 AND fecha = $2',
+      `SELECT reservas_actuales, max_reservas
+       FROM fechas_disponibles
+       WHERE servicio_id = $1 AND fecha = $2`,
       [servicio_id, fecha]
     );
 
-    const yaReservadas = parseInt(result.rows[0].count);
-
-    if (yaReservadas + cantidad > 6) {
+    if (result.rows.length === 0) {
       return res.status(400).json({
-        message: '❌ No quedan plazas disponibles para ese servicio en esa fecha.'
+        message: '❌ Esta fecha no existe o no está disponible para reservar.'
       });
     }
 
+    const { reservas_actuales, max_reservas } = result.rows[0];
+
+    if (reservas_actuales + cantidad > max_reservas) {
+      return res.status(400).json({
+        message: '❌ Ya no quedan plazas disponibles para esta fecha.'
+      });
+    }
+
+    // 2. Insertar reserva
     await db.query(
-      'INSERT INTO reservas (usuario_id, servicio_id, fecha, cantidad) VALUES ($1, $2, $3, $4)',
+      `INSERT INTO reservas (usuario_id, servicio_id, fecha, cantidad)
+       VALUES ($1, $2, $3, $4)`,
       [usuario_id, servicio_id, fecha, cantidad]
     );
 
+    // 3. Actualizar contador en fechas_disponibles
+    await db.query(
+      `UPDATE fechas_disponibles
+       SET reservas_actuales = reservas_actuales + $1
+       WHERE servicio_id = $2 AND fecha = $3`,
+      [cantidad, servicio_id, fecha]
+    );
+
     res.json({ message: '✅ Reserva realizada con éxito' });
+
   } catch (err) {
     console.error('❌ Error al crear reserva:', err);
     res.status(500).json({ message: 'Error del servidor' });
   }
 });
 
+// DELETE /api/reservas/:id
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query('DELETE FROM reservas WHERE id = $1', [id]);
+    res.json({ message: '✅ Reserva cancelada con éxito' });
+  } catch (err) {
+    console.error('❌ Error al cancelar reserva:', err);
+    res.status(500).json({ message: 'Error al cancelar reserva' });
+  }
+});
+
 module.exports = router;
+// DELETE /api/reservas/:id
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query('DELETE FROM reservas WHERE id = $1', [id]);
+    res.json({ message: '✅ Reserva cancelada con éxito' });
+  } catch (err) {
+    console.error('❌ Error al cancelar reserva:', err);
+    res.status(500).json({ message: 'Error al cancelar reserva' });
+  }
+});

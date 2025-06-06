@@ -20,6 +20,9 @@ if (!process.env.OPENAI_API_KEY) {
   process.exit(1);
 }
 
+const fechasRoutes = require('./routes/fechas');
+app.use('/api/fechas', fechasRoutes);
+
 // ----- API Proxy -----
 class ApiService {
   constructor(apiKey) {

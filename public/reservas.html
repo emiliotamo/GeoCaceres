@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Reservar Servicio</title>
   <link rel="stylesheet" href="./sass/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
   <style>
 
     .btn-map {
@@ -455,6 +457,47 @@ Una experiencia imprescindible para fans de la serie y amantes de la historia y 
       });
     });
   </script>
+
+<script>
+  // Aplicar calendario Flatpickr solo con fechas disponibles por servicio
+  document.querySelectorAll('.tour-cards').forEach(async (card) => {
+    const servicioId = card.dataset.servicioId;
+    const form = card.querySelector('.reserva-form');
+    const dateInput = form.querySelector('input[name="fecha"]');
+
+    const msg = document.createElement('small');
+    msg.style.color = 'red';
+    msg.style.fontWeight = 'bold';
+    form.insertBefore(msg, dateInput.nextSibling);
+
+    try {
+      const res = await fetch(`/api/fechas/${servicioId}`);
+      const fechas = await res.json();
+
+      if (fechas.length === 0) {
+        msg.textContent = "⚠️ Esta fecha no está disponible. Escoge otra o vuelve más tarde.";
+        dateInput.disabled = true;
+      } else {
+        msg.textContent = "";
+        dateInput.disabled = false;
+        const fechasDisponibles = fechas.map(f => f.fecha);
+
+        flatpickr(dateInput, {
+          dateFormat: "Y-m-d",
+          enable: fechasDisponibles
+        });
+      }
+    } catch (err) {
+      console.error("❌ Error al cargar fechas:", err);
+      msg.textContent = "❌ Error al cargar fechas disponibles.";
+      dateInput.disabled = true;
+    }
+  });
+</script>
+
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 
 </body>
 </html>

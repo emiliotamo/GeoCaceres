@@ -103,11 +103,66 @@
     .modal.hidden {
       display: none;
     }
+    .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
 
+.modal-content {
+  background-color: #fff;
+  color: #000;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-content p {
+  margin-bottom: 1rem;
+}
+
+.modal-content .botones-modal {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.modal-content .botones-modal .btn {
+  flex: 1;
+}
     .logout-btn {
       text-align: center;
       margin: 2rem auto;
     }
+
+    .hidden {
+  display: none !important;
+}
+
+.datos-perfil p {
+  font-size: 1.4rem;
+  margin: 0.8rem 0;
+  line-height: 1.6;
+}
+
+.datos-perfil strong {
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #0e827f; /* o #3ee0c3 si quieres mantener el color del botón */
+}
+
   </style>
 </head>
 <body>
@@ -219,55 +274,46 @@
       });
 
       // RESERVAS
-      const lista = document.getElementById("listaReservas");
-      const reservas = await fetch(`/api/reservas?usuario_id=${userId}`).then(res => res.json());
+const lista = document.getElementById("listaReservas");
+const reservas = await fetch(`/api/reservas?usuario_id=${userId}`).then(res => res.json());
 
-      if (!reservas.length) {
-        lista.innerHTML = `
-          <p>En este momento no tienes ninguna reserva.</p>
-          <a href="reservas.html" class="btn">Ir a hacer una reserva</a>
-        `;
-      } else {
-        reservas.forEach(r => {
-          const div = document.createElement("div");
-          div.className = "reserva-box";
-          div.innerHTML = `
-            <p><strong>Servicio:</strong> ${r.servicio_nombre}</p>
-            <p><strong>Fecha:</strong> 
-              <input type="date" value="${r.fecha.split('T')[0]}" data-id="${r.id}" class="cambiarFecha" />
-            </p>
-            <p><strong>Personas:</strong> ${r.cantidad}</p>
-            <button class="btn cancelarReserva" data-id="${r.id}">🗑️ Cancelar</button>
-          `;
-          lista.appendChild(div);
-        });
-      }
+if (!reservas.length) {
+  lista.innerHTML = `
+    <p>En este momento no tienes ninguna reserva.</p>
+    <a href="reservas.html" class="btn">Ir a hacer una reserva</a>
+  `;
+} else {
+  reservas.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "reserva-box";
+    div.innerHTML = `
+      <p><strong>Servicio:</strong> ${r.servicio_nombre}</p>
+      <p><strong>Fecha:</strong> 
+        <input type="date" value="${r.fecha.split('T')[0]}" data-id="${r.id}" class="cambiarFecha" />
+      </p>
+      <p><strong>Personas:</strong> ${r.cantidad}</p>
+      <button class="btn cancelarReserva" data-id="${r.id}">🗑️ Cancelar</button>
+    `;
+    lista.appendChild(div);
+  });
+}
 
-      lista.addEventListener("change", e => {
-        if (e.target.classList.contains("cambiarFecha")) {
-          const id = e.target.dataset.id;
-          const fecha = e.target.value;
-          mostrarModal("¿Deseas cambiar la fecha de esta reserva?", async () => {
-            await fetch(`/api/reservas/${id}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ fecha })
-            });
-            alert("📆 Fecha actualizada");
-          });
-        }
-      });
+// 💡 ESTE LISTENER VA DESPUÉS del contenido generado, SOLO UNA VEZ
+lista.addEventListener("click", e => {
+  console.log("🧪 Click detectado en listaReservas:", e.target);
 
-      lista.addEventListener("click", e => {
-        if (e.target.classList.contains("cancelarReserva")) {
-          const id = e.target.dataset.id;
-          mostrarModal("¿Deseas cancelar esta reserva?", async () => {
-            await fetch(`/api/reservas/${id}`, { method: "DELETE" });
-            location.reload();
-          });
-        }
-      });
+  if (e.target.classList.contains("cancelarReserva")) {
+    console.log("🗑️ Botón de cancelar clicado");
 
+    const id = e.target.dataset.id;
+
+    mostrarModal("¿Deseas cancelar esta reserva?", async () => {
+      await fetch(`/api/reservas/${id}`, { method: "DELETE" });
+      alert("✅ Reserva cancelada");
+      location.reload();
+    });
+  }
+});
       // MODAL
       const modal = document.getElementById("modalConfirmacion");
       const mensaje = document.getElementById("modalMensaje");
@@ -292,3 +338,4 @@
   </script>
 </body>
 </html>
+
