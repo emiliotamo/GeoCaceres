@@ -27,7 +27,7 @@ app.use('/api/fechas', fechasRoutes);
 class ApiService {
   constructor(apiKey) {
     this.axiosInstance = axios.create({
-      baseURL: 'http://localhost:5010/api/OpenDataSig',
+        baseURL: 'http://localhost:5010/api/OpenDataSig',
       headers: {
         'Content-Type': 'application/json',
         'OpenAi-ApiKey': apiKey,
