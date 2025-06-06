@@ -24,7 +24,7 @@ if (!process.env.OPENAI_API_KEY) {
 class ApiService {
   constructor(apiKey) {
     this.axiosInstance = axios.create({
-      baseURL: 'http://localhost:5010/api/OpenDataSig',
+      baseURL: 'https://geocaceres.onrender.com/api/OpenDataSig',
       headers: {
         'Content-Type': 'application/json',
         'OpenAi-ApiKey': apiKey,
