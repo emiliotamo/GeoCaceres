@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("✅ DOM cargado");
 
   // Verifica usuario en localStorage
-  const userData = localStorage.getItem("usuario");
+const userData = sessionStorage.getItem("usuario");
+
   console.log("🧪 Usuario guardado:", userData);
 
   if (userData) {
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const logoutLink = document.getElementById("logoutLink");
       logoutLink.addEventListener("click", (e) => {
         e.preventDefault();
-        localStorage.removeItem("usuario");
+       sessionStorage.removeItem("usuario");
         location.reload();
       });
     }
@@ -98,8 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
         };
   
         console.log("✅ Usuario autenticado, guardando en localStorage:", userObj);
-        localStorage.setItem("usuario", JSON.stringify(userObj));
-  
+       sessionStorage.setItem("usuario", JSON.stringify(userObj));
+
         // Verificamos inmediatamente si se guardó correctamente
         const stored = localStorage.getItem("usuario");
         console.log("📦 localStorage justo antes del reload:", stored);
